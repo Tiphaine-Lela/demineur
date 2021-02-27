@@ -64,17 +64,29 @@ class Board:
         return list_neighbors
 
     # return True if the digging signals the end of the game
-    # TESTED
+    # on ajoute la fonctionnalité intelligente
+    # TO TEST
     def dig(self, pos_x, pos_y):
         # check whether the square had been already dug
         if self.board[pos_x][pos_y].get_unveiled():
             return False
+
         # dig the square
         self.board[pos_x][pos_y].dig_square()
         # if it explodes, end of the game
         if self.board[pos_x][pos_y].get_mine():
             return True
+
         self.dug_squares += 1
+        # smart digging
+        if self.board[pos_x][pos_y].get_mines_neighbors() == 0:
+            # dig all the not-already-dug neighbors
+            neighbors = self.get_neighbors((pos_x, pos_y))
+            for neigh_pos in neighbors:
+                neigh_x, neigh_y = neigh_pos[0], neigh_pos[1]
+                if not self.board[neigh_x][neigh_y].get_unveiled():
+                    self.dig(neigh_x, neigh_y)
+
         # if it is the last square without mines, it is the end (win)
         if self.dug_squares == self.dim_x * self.dim_y - self.nb_mines:
             self.win = True

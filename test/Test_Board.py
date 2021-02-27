@@ -35,11 +35,20 @@ class MyTestCase(unittest.TestCase):
     def test_dig(self):
         b1 = Board(3, 3, 0)
         b1.board[0][0].set_mine(True)
-        self.assertFalse(b1.dig(0, 1))
-        self.assertEqual(b1.dug_squares, 1, "the number of dug squares hasn't incremented")
-        self.assertFalse(b1.dig(0, 1))
         self.assertTrue(b1.dig(0, 0), "The mine isn't exploding")
-        # pas fait le test sur la derniere mine qui finit le jeu
+        self.assertFalse(b1.dig(0, 1))
+        self.assertFalse(b1.dig(0, 1))
+        # pas fait le test sur la derniere case qui finit le jeu
+
+    def test_smart_digging(self):
+        # test smart digging
+        b2 = Board(3, 3, 0)
+        b2.board[0][0].set_mine(True)
+        b2.dig(2, 2)
+        self.assertTrue(b2.board[2][0])
+        self.assertTrue(b2.board[2][1])
+        self.assertTrue(b2.board[0][2])
+        self.assertTrue(b2.board[1][2])
 
 
 if __name__ == '__main__':

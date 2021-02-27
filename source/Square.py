@@ -33,6 +33,9 @@ class Square:
         self.__mine = mine
         return
 
+    def get_mines_neighbors(self):
+        return self.__nb_mines_neighbors
+
     # TESTED
     def increase_mines_neighbors(self):
         self.__nb_mines_neighbors += 1
