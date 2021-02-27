@@ -7,7 +7,7 @@ class Square:
         self.__mine = False
         self.__nb_mines_neighbors = 0
         self.__unveiled = False
-        self.flag = False
+        self.__flag = False
 
     # TESTED
     def set_position(self, x, y):
@@ -42,14 +42,19 @@ class Square:
 
     # TESTED
     def dig_square(self):
-        self.__unveiled = True
+        if not self.__flag:
+            self.__unveiled = True
         return True
 
-    def put_flag(self):
-        pass
+    def get_flag(self):
+        return self.__flag
 
-    def remove_flag(self):
-        pass
+    # TESTED
+    # a square can't be flagged if it is unveiled
+    def modify_flag(self):
+        if not self.__unveiled:
+            self.__flag = not self.__flag
+        return
 
     # TESTED
     def display(self):

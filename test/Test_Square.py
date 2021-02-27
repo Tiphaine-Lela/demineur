@@ -28,6 +28,19 @@ class TestSquare(unittest.TestCase):
         self.square.dig_square()
         self.assertEqual(self.square.get_unveiled(), True)
 
+    def test_flag(self):
+        s1 = Square()
+        self.assertFalse(s1.get_flag())
+
+        s1.modify_flag()
+        s1.dig_square()
+        self.assertFalse(s1.get_unveiled())
+        s1.modify_flag()
+
+        s1.dig_square()
+        s1.modify_flag()
+        self.assertFalse(s1.get_flag())
+
     def test_display(self):
         s1 = Square()
         self.assertEqual(s1.display(), ".", "Problems with hidden square")
