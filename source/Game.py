@@ -17,7 +17,6 @@ class Game:
             nb_mines = self.input_number()
         # create the board
         self.game_board = Board(dim_x, dim_y, nb_mines)
-        # self.game_board.display()
 
         self.play()
         return
@@ -27,7 +26,6 @@ class Game:
     def input_number(self):
         x = "-1"
         x_int = -1
-        # print("Veuillez saisir une valeur :")
         x_not_ok = True
         while x_not_ok:
             x = input()
@@ -38,18 +36,18 @@ class Game:
                 print("La valeur n'est valide. Veuillez la ressaisir : ")
         return x_int
 
+    # manage the player and the moves
     def play(self):
         game_continues = True
         while game_continues:
             self.game_board.display()
-            # ask the position of the square to dig
-            print("Veuillez entrer le numéro de la ligne de la case à creuser :")
-            pos_x = self.input_number()
-            print("Veuillez entrer le numéro de la colonne de la case à creuser :")
-            pos_y = self.input_number()
 
-            res_digging = self.game_board.dig(pos_x, pos_y)
-            game_continues = not res_digging
+            if self.ask_action() == "C":
+                # ask the position of the square to dig
+                res_digging = self.play_dig()
+                game_continues = not res_digging
+            else:
+                self.play_flag()
 
         # end
         if self.game_board.get_win():
@@ -60,10 +58,45 @@ class Game:
             self.game_board.display()
         return
 
+    # return the string with the action to perform
+    # TESTED
+    def ask_action(self):
+        print("Veuillez entrer l'action à jouer (D : drapeau ; C : creuser)")
+        x = ""
+        x_not_ok = True
+        while x_not_ok:
+            x = input()
+            x = x.strip()
+            if x != "C" and x != "D":
+                print("L'action n'a pas été comprise. Veuillez la ressaisir : ")
+            else:
+                x_not_ok = False
+        return x
+
+    # return True if the digging signals the end of the game
+    # TESTED
+    def play_dig(self):
+        print("Veuillez entrer le numéro de la ligne de la case à creuser :")
+        pos_x = self.input_number()
+        print("Veuillez entrer le numéro de la colonne de la case à creuser :")
+        pos_y = self.input_number()
+
+        res_digging = self.game_board.dig(pos_x, pos_y)
+        return res_digging
+
+    def play_flag(self):
+        print("Veuillez entrer le numéro de la ligne de la case (poser/enlever un drapeau) :")
+        pos_x = self.input_number()
+        print("Veuillez entrer le numéro de la colonne de la case (poser/enlever un drapeau) :")
+        pos_y = self.input_number()
+
+        self.game_board.modify_state_flag(pos_x, pos_y)
+        return
+
 
 def main():
     g1 = Game()
-    # print(g1.input_number())
+    # g1.ask_action()
     return
 
 

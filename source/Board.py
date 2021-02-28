@@ -63,12 +63,19 @@ class Board:
         list_neighbors.remove((x, y))
         return list_neighbors
 
+    def modify_state_flag(self, pos_x, pos_y):
+        self.board[pos_x][pos_y].modify_flag()
+        return
+
     # return True if the digging signals the end of the game
-    # on ajoute la fonctionnalité intelligente
-    # TO TEST
+    # smart digging implemented
     def dig(self, pos_x, pos_y):
         # check whether the square had been already dug
         if self.board[pos_x][pos_y].get_unveiled():
+            return False
+
+        # check whether there is a flag
+        if self.board[pos_x][pos_y].get_flag():
             return False
 
         # dig the square

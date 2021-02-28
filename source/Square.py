@@ -58,9 +58,10 @@ class Square:
 
     # TESTED
     def display(self):
+        if self.__flag:
+            return "@"
         if not self.__unveiled:
             return "."
         if not self.__mine:
-            # TODO : next step, return the flag
             return str(self.__nb_mines_neighbors)
         return "*"
