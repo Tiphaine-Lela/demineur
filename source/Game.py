@@ -68,7 +68,7 @@ class Game:
             x = input()
             x = x.strip()
             if x != "C" and x != "D":
-                print("L'action n'a pas été comprise. Veuillez la ressaisir : ")
+                print("L'action n'a pa s été comprise. Veuillez la ressaisir : ")
             else:
                 x_not_ok = False
         return x

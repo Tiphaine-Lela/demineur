@@ -39,7 +39,7 @@ class Board:
         return self.win
 
     # TESTED
-    # return the position of all the mines
+    # define the position of all the mines
     def pos_mines(self):
         pos_mines = []
         while len(pos_mines) != self.nb_mines:
@@ -49,7 +49,7 @@ class Board:
                 pos_mines.append(position)
         return pos_mines
 
-    # return the position of all the neighbors of the give mine
+    # return the position of all the neighbors of the given mine
     # TESTED
     def get_neighbors(self, position_mine):
         x = position_mine[0]
@@ -117,4 +117,12 @@ class Board:
         print(to_display)
         return
 
+    # return a matrix with symbols of the squares inside
+    def display_matrix(self):
+        list_display = []
+        for x in range(len(self.board)):
+            list_display.append([])
+            for y in range(len(self.board[0])):
+                list_display[x].append(self.board[x][y].display())
+        return list_display
 
