@@ -4,7 +4,6 @@ import tkinter as tk
 
 class GameInterface(tk.Frame):
     def __init__(self, master=None, dim_x=10, dim_y=10, nb_mines=20):
-        self.game_board = Board(dim_x, dim_y, nb_mines)
         self.dim_x = dim_x
         self.dim_y = dim_y
         self.nb_mines = nb_mines
@@ -21,21 +20,41 @@ class GameInterface(tk.Frame):
         self.frm_top.pack()
 
         # some infos display
-        self.frm_middle = tk.Frame(master=self)
-        self.lbl_middle = tk.Label(master=self.frm_middle, text="", width=25, height=1)
-        # info : the number of mines to find
-        self.lbl_nb_left_mines = tk.Label(master=self.frm_middle, text=str(self.nb_mines), width=25, height=1)
-        # rajouter un bouton pour choisir la taille de la grille et le nombre de mines
-        # rajouter un bouton pour réinitialiser le jeu
-        self.lbl_middle.pack()
-        self.lbl_nb_left_mines.pack()
-        self.frm_middle.pack()
+        self.create_widgets_infos()
+        return
 
-        # gameboard display
+    def create_widgets_infos(self):
+        self.frm_middle = tk.Frame(master=self)
+
+        # settings widgets (height, width and number of mines in the game board)
+        self.frm_settings = tk.Frame(master=self.frm_middle)
+        self.ent_height = tk.Entry(master=self.frm_settings)
+        self.ent_width = tk.Entry(master=self.frm_settings)
+        self.ent_nb_mines = tk.Entry(master=self.frm_settings)
+        self.btn_validation = tk.Button(master=self.frm_settings, text="OK")
+        self.btn_validation.bind("<Button-1>", self.handle_validation)
+
+        self.frm_settings.pack()
+        self.ent_height.pack(side=tk.LEFT)
+        self.ent_width.pack(side=tk.LEFT)
+        self.ent_nb_mines.pack(side=tk.LEFT)
+        self.btn_validation.pack(side=tk.LEFT)
+
+        # info : win or lose
+        self.lbl_infos = tk.Label(master=self.frm_middle, text="", width=25, height=1)
+        # info : the number of mines to find
+        self.lbl_nb_left_mines = tk.Label(master=self.frm_middle, text="", width=25, height=1)
+        # rajouter un bouton pour réinitialiser le jeu
+
+        self.frm_middle.pack()
+        self.lbl_infos.pack()
+        self.lbl_nb_left_mines.pack()
+        return
+
+    def create_widgets_gameboard(self):
         self.frm_game = tk.Frame(master=self)
         for row in range(self.dim_x):
             for column in range(self.dim_y):
-                # relief et borderwidth sont necessaires pour avoir les traits qui separent les Frames
                 frm_grid = tk.Frame(master=self.frm_game, relief=tk.RAISED, borderwidth=1)
                 btn_grid = tk.Button(master=frm_grid, text=".", width=2, height=1)
                 btn_grid.bind("<Button-1>", self.handle_left_click)
@@ -44,6 +63,22 @@ class GameInterface(tk.Frame):
                 frm_grid.grid(row=row, column=column)
 
         self.frm_game.pack()
+        return
+
+    # no string checking (yet)
+    def handle_validation(self, event):
+        # get the settings
+        self.dim_x = int(self.ent_height.get())
+        self.dim_y = int(self.ent_width.get())
+        self.nb_mines = int(self.ent_nb_mines.get())
+        print(self.nb_mines)
+        # disable the validation Button
+        self.btn_validation.pack_forget()
+        # write the right number of mines to flag
+        self.lbl_nb_left_mines["text"] = str(self.nb_mines)
+        # create the game board
+        self.create_widgets_gameboard()
+        self.game_board = Board(self.dim_x, self.dim_y, self.nb_mines)
         return
 
     def handle_left_click(self, event):
@@ -55,15 +90,15 @@ class GameInterface(tk.Frame):
         # check whether it's the end
         if res_digging:
             if self.game_board.get_win():
-                self.lbl_middle["text"] = "Félicitations, vous avez gagné !"
+                self.lbl_infos["text"] = "Félicitations, vous avez gagné !"
             else:
-                self.lbl_middle["text"] = "Désolée, vous avez perdu..."
+                self.lbl_infos["text"] = "Désolée, vous avez perdu..."
             # disable the Buttons in the grid
             for x in range(self.dim_x):
                 for y in range(self.dim_y):
                     frm_grid = self.frm_game.grid_slaves(x, y)[0]
                     btn_grid = frm_grid.winfo_children()[0]
-                    btn_grid.config(state="disable")
+                    btn_grid.config(state="disabled")
 
         # display the game
         board_display = self.game_board.display_matrix()
@@ -108,6 +143,7 @@ il faut definir l'interface avant le game board,
 demander les chiffres, puis definir le game board et la grille dans l'interface. 
 les boutons pour entrer les parametres ne doivent plus etre utilisables apres
 """
+
 
 app = GameInterface()
 app.mainloop()
