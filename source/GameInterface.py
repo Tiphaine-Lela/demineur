@@ -23,14 +23,14 @@ class GameInterface(tk.Frame):
         self.frm_top.pack()
 
         # some infos display
+        self.frm_middle = tk.Frame(master=self)
+        self.frm_game = tk.Frame(master=self)
         self.create_widgets_infos()
         return
 
     def create_widgets_infos(self):
-        self.frm_middle = tk.Frame(master=self)
 
         # TODO rajouter les parametres de grille par defaut
-        # TODO rajouter le bouton de reinitialisation
         width_widget = 10
         # graph legend
         self.frm_legend = tk.Frame(master=self.frm_middle)
@@ -56,13 +56,16 @@ class GameInterface(tk.Frame):
         self.ent_nb_mines.pack(side=tk.LEFT)
         self.btn_validation.pack(side=tk.LEFT)
 
+        # button to reset the game and the settings
+        self.btn_reset = tk.Button(master=self.frm_middle, text="Réinitialiser")
+        self.btn_reset.bind("<Button-1>", self.handle_reset)
         # info : win or lose
         self.lbl_infos = tk.Label(master=self.frm_middle, text="", width=25, height=1)
         # info : the number of mines to find
         self.lbl_nb_left_mines = tk.Label(master=self.frm_middle, text="", width=25, height=1)
-        # rajouter un bouton pour réinitialiser le jeu
 
         self.frm_middle.pack()
+        self.btn_reset.pack()
         self.lbl_infos.pack()
         self.lbl_nb_left_mines.pack()
         return
@@ -71,10 +74,8 @@ class GameInterface(tk.Frame):
         self.frm_game = tk.Frame(master=self)
         for row in range(self.dim_x):
             for column in range(self.dim_y):
-                frm_grid = tk.Frame(master=self.frm_game, relief=tk.RAISED, borderwidth=1)
-                # TODO on pourrait faire une taille un peu plus grande
-                # TODO changer la couleur des caracteres
-                btn_grid = tk.Button(master=frm_grid, text=".", width=2, height=1)
+                frm_grid = tk.Frame(master=self.frm_game, relief=tk.FLAT, borderwidth=1)
+                btn_grid = tk.Button(master=frm_grid, text=".", width=2, height=1, fg="black", bg="white")
                 btn_grid.bind("<Button-1>", self.handle_left_click)
                 btn_grid.bind("<Button-3>", self.handle_right_click)
                 btn_grid.pack()
@@ -93,7 +94,8 @@ class GameInterface(tk.Frame):
         print(self.nb_mines)
         # forget the validation Button
         self.btn_validation.pack_forget()
-        # TODO on pourrait forget aussi les Entry de parametres
+        self.frm_legend.pack_forget()
+        self.frm_settings.pack_forget()  # est-ce que c'est vraiment pertinent d'oublier cela ? (pour le joueur)
         # write the right number of mines to flag
         self.lbl_nb_left_mines["text"] = str(self.nb_mines)
         # create the game board
@@ -120,13 +122,7 @@ class GameInterface(tk.Frame):
                     btn_grid = frm_grid.winfo_children()[0]
                     btn_grid.config(state="disabled")
 
-        # display the game
-        board_display = self.game_board.display_matrix()
-        for x in range(self.dim_x):
-            for y in range(self.dim_y):
-                frm_grid = self.frm_game.grid_slaves(x, y)[0]
-                btn_grid = frm_grid.winfo_children()[0]
-                btn_grid["text"] = board_display[x][y]
+        self.display()
         return
 
     def handle_right_click(self, event):
@@ -146,6 +142,25 @@ class GameInterface(tk.Frame):
             to_increase = int(self.lbl_nb_left_mines["text"])
             self.lbl_nb_left_mines["text"] = str(to_increase + 1)
         return
+
+    def handle_reset(self, event):
+        # remove every widget in the middle frame and in the board frame
+        for widget in self.frm_middle.winfo_children():
+            widget.pack_forget()
+        self.frm_game.pack_forget()
+
+        # restart the game
+        self.create_widgets_infos()
+        return
+
+    def display(self):
+        board_display = self.game_board.display_matrix()
+        for x in range(self.dim_x):
+            for y in range(self.dim_y):
+                frm_grid = self.frm_game.grid_slaves(x, y)[0]
+                btn_grid = frm_grid.winfo_children()[0]
+                btn_grid["text"] = board_display[x][y]
+
 
 """
 est-ce qu'on peut obtenir tous les widgets qui se trouvent dans une Frame, a partir de la Frame ?
