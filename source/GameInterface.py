@@ -1,6 +1,9 @@
 from source.Board import Board
 import tkinter as tk
 
+# TODO rajouter les touches magiques
+# TODO rajouter les scores
+# TODO rajouter le chronometre
 
 class GameInterface(tk.Frame):
     def __init__(self, master=None, dim_x=10, dim_y=10, nb_mines=20):
@@ -26,11 +29,24 @@ class GameInterface(tk.Frame):
     def create_widgets_infos(self):
         self.frm_middle = tk.Frame(master=self)
 
+        # TODO rajouter les parametres de grille par defaut
+        # TODO rajouter le bouton de reinitialisation
+        width_widget = 10
+        # graph legend
+        self.frm_legend = tk.Frame(master=self.frm_middle)
+        self.lbl_height = tk.Label(master=self.frm_legend, text="Hauteur", width=width_widget)
+        self.lbl_width = tk.Label(master=self.frm_legend, text="Largeur", width=width_widget)
+        self.lbl_nb_mines = tk.Label(master=self.frm_legend, text="Mines", width=width_widget)
+        self.frm_legend.pack()
+        self.lbl_height.pack(side=tk.LEFT)
+        self.lbl_width.pack(side=tk.LEFT)
+        self.lbl_nb_mines.pack(side=tk.LEFT)
+
         # settings widgets (height, width and number of mines in the game board)
         self.frm_settings = tk.Frame(master=self.frm_middle)
-        self.ent_height = tk.Entry(master=self.frm_settings)
-        self.ent_width = tk.Entry(master=self.frm_settings)
-        self.ent_nb_mines = tk.Entry(master=self.frm_settings)
+        self.ent_height = tk.Entry(master=self.frm_settings, width=width_widget)
+        self.ent_width = tk.Entry(master=self.frm_settings, width=width_widget)
+        self.ent_nb_mines = tk.Entry(master=self.frm_settings, width=width_widget)
         self.btn_validation = tk.Button(master=self.frm_settings, text="OK")
         self.btn_validation.bind("<Button-1>", self.handle_validation)
 
@@ -56,6 +72,8 @@ class GameInterface(tk.Frame):
         for row in range(self.dim_x):
             for column in range(self.dim_y):
                 frm_grid = tk.Frame(master=self.frm_game, relief=tk.RAISED, borderwidth=1)
+                # TODO on pourrait faire une taille un peu plus grande
+                # TODO changer la couleur des caracteres
                 btn_grid = tk.Button(master=frm_grid, text=".", width=2, height=1)
                 btn_grid.bind("<Button-1>", self.handle_left_click)
                 btn_grid.bind("<Button-3>", self.handle_right_click)
@@ -66,14 +84,16 @@ class GameInterface(tk.Frame):
         return
 
     # no string checking (yet)
+    # si l'utilisateur ne saisit rien, on garde les nombres par defaut
     def handle_validation(self, event):
         # get the settings
         self.dim_x = int(self.ent_height.get())
         self.dim_y = int(self.ent_width.get())
         self.nb_mines = int(self.ent_nb_mines.get())
         print(self.nb_mines)
-        # disable the validation Button
+        # forget the validation Button
         self.btn_validation.pack_forget()
+        # TODO on pourrait forget aussi les Entry de parametres
         # write the right number of mines to flag
         self.lbl_nb_left_mines["text"] = str(self.nb_mines)
         # create the game board
