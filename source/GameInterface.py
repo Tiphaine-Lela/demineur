@@ -1,9 +1,10 @@
 from source.Board import Board
+from source.Lbl_chrono import Lbl_chrono
 import tkinter as tk
 
 # TODO rajouter les touches magiques
 # TODO rajouter les scores
-# TODO rajouter le chronometre
+
 
 class GameInterface(tk.Frame):
     def __init__(self, master=None, dim_x=10, dim_y=10, nb_mines=20):
@@ -18,7 +19,7 @@ class GameInterface(tk.Frame):
     def create_widgets(self):
         # title display
         self.frm_top = tk.Frame(master=self)
-        self.lbl_title = tk.Label(master=self.frm_top, text="Démineur")
+        self.lbl_title = tk.Label(master=self.frm_top, text="Démineuse")
         self.lbl_title.pack()
         self.frm_top.pack()
 
@@ -32,7 +33,7 @@ class GameInterface(tk.Frame):
 
         # TODO rajouter les parametres de grille par defaut
         width_widget = 10
-        # graph legend
+        # setting legend
         self.frm_legend = tk.Frame(master=self.frm_middle)
         self.lbl_height = tk.Label(master=self.frm_legend, text="Hauteur", width=width_widget)
         self.lbl_width = tk.Label(master=self.frm_legend, text="Largeur", width=width_widget)
@@ -62,12 +63,15 @@ class GameInterface(tk.Frame):
         # info : win or lose
         self.lbl_infos = tk.Label(master=self.frm_middle, text="", width=25, height=1)
         # info : the number of mines to find
-        self.lbl_nb_left_mines = tk.Label(master=self.frm_middle, text="", width=25, height=1)
+        self.lbl_nb_left_mines = tk.Label(master=self.frm_middle, text="", width=12, height=1)
+        # the chrono
+        self.lbl_chrono = Lbl_chrono(master=self.frm_middle, width=12, height=1)
 
         self.frm_middle.pack()
         self.btn_reset.pack()
         self.lbl_infos.pack()
-        self.lbl_nb_left_mines.pack()
+        self.lbl_nb_left_mines.pack(side=tk.LEFT)
+        self.lbl_chrono.pack(side=tk.LEFT)
         return
 
     def create_widgets_gameboard(self):
@@ -104,6 +108,7 @@ class GameInterface(tk.Frame):
         return
 
     def handle_left_click(self, event):
+        self.lbl_chrono.start_chrono()
         # dig the square
         grid_info = event.widget.master.grid_info()
         x = grid_info["row"]
@@ -111,6 +116,7 @@ class GameInterface(tk.Frame):
         res_digging = self.game_board.dig(x, y)
         # check whether it's the end
         if res_digging:
+            self.lbl_chrono.stop_chrono()
             if self.game_board.get_win():
                 self.lbl_infos["text"] = "Félicitations, vous avez gagné !"
             else:
